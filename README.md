@@ -12,5 +12,5 @@ sudo apt-get install lua5.3
 ```
 git clone https://github.com/HamsChan/FictionCodespace
 ```
-># Details
->[Alpha] v.0.1
+>## Details
+>**###[Alpha] v.0.1**
