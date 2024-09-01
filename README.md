@@ -5,7 +5,7 @@ So hopefully you can try, it is okay to modify the code for personal use.
 
 > Download Lua: >
 ```
-sudoapt-get install lua5.3
+sudo apt-get install lua5.3
 ```
 
 > Get the folder: >
