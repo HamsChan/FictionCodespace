@@ -1,7 +1,8 @@
 # Hello there
-So I'm creating a tools, not useful.<br/> 
+So I'm creating a tool, not useful.<br/> 
 But just for fun, it made with Lua script :D<br/>
-So hopefully you want to give it a try, it is okay to modify the code for personal use.
+So hopefully you want to give it a try, it is okay to modify the code for personal use.<br/>
+Sorry for any grammar errors, have a great day!
 
 > Download Lua: 
 ```
