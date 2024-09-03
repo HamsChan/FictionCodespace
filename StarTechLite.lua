@@ -3,7 +3,7 @@ function MechanicReset()
         Type = io.popen("sudo dmidecode -s system-manufacturer"),
         --gsub to remove gap of return/break or enter
         Type2 = io.popen("sudo dmidecode -s system-product-name"),
-        Ip_Host = io.popen("ifconfig wlan0 | grep 'inet ' | awk '{print $2}'")
+        Ip_Host = io.popen("ip route show default | awk '/default/ {print $3}'")
     }
     TypeDevice_Table = {
         Type = RawTable.Type:read("*a"):gsub("%s+$",""),
@@ -32,6 +32,8 @@ function CommandListOutput()
     print("\n┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛")
     if Choice == 1 then
         Print_DeviceInfo()
+    elseif Choice == 2 then
+    	Print_IP_Host()
     else
         AskingCommand(false)
     end
