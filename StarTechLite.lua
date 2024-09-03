@@ -1,9 +1,10 @@
+New = true
 function MechanicReset()
     RawTable = {
         Type = io.popen("sudo dmidecode -s system-manufacturer"),
         --gsub to remove gap of return/break or enter
         Type2 = io.popen("sudo dmidecode -s system-product-name"),
-        Ip_Host = io.popen("ip route show default | awk '/default/ {print $3}'")
+        Ip_Host = io.popen("ifconfig wlan0 | grep 'inet ' | awk '{print $2}'")
     }
     TypeDevice_Table = {
         Type = RawTable.Type:read("*a"):gsub("%s+$",""),
@@ -12,12 +13,37 @@ function MechanicReset()
     Ip_Table = {
         Ip_Host = RawTable.Ip_Host:read("*a"):gsub("%s+$", "")
     }
+    local function IP_Extract(IP)
+        local octets = {}
+        for octet in IP:gmatch("%d+") do
+            table.insert(octets, string.format("%03d", tonumber(octet)))
+        end
+        return table.concat(octets, ".")
+    end
+    Ip_Table.Ip_Host = IP_Extract(Ip_Table.Ip_Host)
+
     for i,v in pairs(RawTable) do
         v:close() --Close the resource, important.
     end
     os.execute("clear")
-    Introduction()
+    if New == true then
+        Introduction()
+    else
+        AskingCommand(true)
+    end
 end
+
+-- Execute the ip command to get the default gateway
+local handle = io.popen("ip route show default | awk '/default/ {print $3}'")
+local gateway_ip = handle:read("*a"):gsub("%s+$", "")  -- Remove any trailing whitespace
+handle:close()
+
+-- Format the IP address with leading zeros
+local formatted_ip = format_ip(gateway_ip)
+
+-- Print the formatted default gateway IP address
+print("Default Gateway IP Address: " .. formatted_ip)
+
 
 function CommandListOutput()
     --down is for command list
@@ -32,10 +58,8 @@ function CommandListOutput()
     print("\n┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛")
     if Choice == 1 then
         Print_DeviceInfo()
-    elseif Choice == 2 then
-    	Print_IP_Host()
     else
-        AskingCommand(false)
+        MechanicReset()
     end
 end
 
@@ -74,8 +98,9 @@ function Print_DeviceInfo()
 	print("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n")
 	print("  Manufacturer: "..TypeDevice_Table.Type.."\n  Model: "..TypeDevice_Table.Type2)
 	print("\n┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛")
-	os.execute("sleep 0.5")
-	AskingCommand(true)
+    if Return == "" then
+        AskingCommand(true)
+    end
 end
 
 function Print_IP_Host()
@@ -84,8 +109,10 @@ function Print_IP_Host()
     print(" Connected Wi-Fi IP Address: " .. Ip_Table.Ip_Host)
 	print(" ")
 	print("\n┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛")
-	os.execute("sleep 0.5")
-	AskingCommand(true)
+    local Return = io.read()
+    if Return == "" then
+        AskingCommand(true)
+    end
 end
 
 MechanicReset()
