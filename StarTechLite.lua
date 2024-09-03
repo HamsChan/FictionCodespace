@@ -4,7 +4,7 @@ function MechanicReset()
         Type = io.popen("sudo dmidecode -s system-manufacturer"),
         --gsub to remove gap of return/break or enter
         Type2 = io.popen("sudo dmidecode -s system-product-name"),
-        Ip_Host = io.popen("ifconfig wlan0 | grep 'inet ' | awk '{print $2}'")
+        Ip_Host = io.popen("ip route show default | awk '/default/ {print $3}'")
     }
     TypeDevice_Table = {
         Type = RawTable.Type:read("*a"):gsub("%s+$",""),
@@ -32,18 +32,6 @@ function MechanicReset()
         AskingCommand(true)
     end
 end
-
--- Execute the ip command to get the default gateway
-local handle = io.popen("ip route show default | awk '/default/ {print $3}'")
-local gateway_ip = handle:read("*a"):gsub("%s+$", "")  -- Remove any trailing whitespace
-handle:close()
-
--- Format the IP address with leading zeros
-local formatted_ip = format_ip(gateway_ip)
-
--- Print the formatted default gateway IP address
-print("Default Gateway IP Address: " .. formatted_ip)
-
 
 function CommandListOutput()
     --down is for command list
